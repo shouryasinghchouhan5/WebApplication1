@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Accounting";
+}
+
+<div class="accounting-dashboard">
+    <h1>@ViewData["Title"]</h1>
+    <p>Welcome to the Accounting section. Here you can manage financial transactions and reports.</p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <a asp-action="AP" class="btn-accounting">AP (Accounts Payable)</a>
+        </div>
+        <div class="col-md-4">
+            <a asp-action="BankInterfaceTransfers" class="btn-accounting">Bank Interface Transfers</a>
+        </div>
+        <div class="col-md-4">
+            <a asp-action="Bankruptcy" class="btn-accounting">Bankruptcy</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <a asp-action="LegalWatchlist" class="btn-accounting">Legal Watchlist</a>
+        </div>
+        <div class="col-md-4">
+            <a asp-action="Securities" class="btn-accounting">Securities</a>
+        </div>
+        <div class="col-md-4">
+            <a asp-action="SecuritiesMRI" class="btn-accounting">Securities_MRI</a>
+        </div>
+    </div>
+</div>

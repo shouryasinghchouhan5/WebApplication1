@@ -5,21 +5,30 @@
 <h1>@ViewData["Title"]</h1>
 
 <div class="row">
-    <div class="col-md-6 mb-4">
+    <div class="col-md-4">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">NexusIBS</h5>
-                <p class="card-text">Access NexusIBS related functions.</p>
-                <a asp-controller="NexusIBS" asp-action="Index" class="btn btn-primary btn-block">Go to NexusIBS</a>
+                <p>Access NexusIBS related functions.</p>
+                <a asp-controller="NexusIBS" asp-action="Index" class="btn btn-primary">Go to NexusIBS</a>
             </div>
         </div>
     </div>
-    <div class="col-md-6 mb-4">
+    <div class="col-md-4">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Kamson Properties</h5>
-                <p class="card-text">Manage Kamson Properties information.</p>
-                <a asp-controller="KamsonProperties" asp-action="Index" class="btn btn-primary btn-block">Go to Kamson Properties</a>
+                <p>Manage Kamson Properties information.</p>
+                <a asp-controller="KamsonProperties" asp-action="Index" class="btn btn-primary">Go to Kamson Properties</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Accounting</h5>
+                <p>Manage financial transactions and reports.</p>
+                <a asp-controller="Accounting" asp-action="Index" class="btn btn-primary">Go to Accounting</a>
             </div>
         </div>
     </div>

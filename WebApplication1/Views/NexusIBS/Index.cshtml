@@ -7,24 +7,24 @@
     <p>Welcome to the Nexus IBS system. Use the buttons below to access different features.</p>
 
     <div class="row">
-        <div class="col-md-6 mb-3">
-            <a href="@Url.Action("BankReconciliation", "NexusIBS")" class="btn">Bank Reconciliation</a>
+        <div class="col-md-6">
+            <a asp-action="BankReconciliation" class="btn-nexus">Bank Reconciliation</a>
         </div>
-        <div class="col-md-6 mb-3">
-            <a href="@Url.Action("UploadNexusPayables", "NexusIBS")" class="btn">Upload Nexus Payables</a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <a href="@Url.Action("ProcessNexusPayables", "NexusIBS")" class="btn">Process Nexus Payables</a>
-        </div>
-        <div class="col-md-6 mb-3">
-            <a href="@Url.Action("ProcessConnectOnePayables", "NexusIBS")" class="btn">Process ConnectOne Payables</a>
+        <div class="col-md-6">
+            <a asp-action="UploadNexusPayables" class="btn-nexus">Upload Nexus Payables</a>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 mb-3">
-            <a href="@Url.Action("DatabaseMaintenance", "NexusIBS")" class="btn">Database Maintenance</a>
+        <div class="col-md-6">
+            <a asp-action="ProcessNexusPayables" class="btn-nexus">Process Nexus Payables</a>
+        </div>
+        <div class="col-md-6">
+            <a asp-action="ProcessConnectOnePayables" class="btn-nexus">Process ConnectOne Payables</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <a asp-action="DatabaseMaintenance" class="btn-nexus">Database Maintenance</a>
         </div>
     </div>
 </div>

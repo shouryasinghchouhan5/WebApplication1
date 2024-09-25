@@ -83,4 +83,10 @@ app.MapControllerRoute(
     pattern: "kamson-properties",
     defaults: new { controller = "KamsonProperties", action = "Index" });
 
+// Add new route for Accounting
+app.MapControllerRoute(
+    name: "accounting",
+    pattern: "accounting",
+    defaults: new { controller = "Accounting", action = "Index" });
+
 app.Run();
