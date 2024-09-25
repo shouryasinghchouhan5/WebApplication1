@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Nexus IBS Dashboard";
+}
+
+<div class="nexus-dashboard">
+    <h1>@ViewData["Title"]</h1>
+    <p>Welcome to the Nexus IBS system. Use the buttons below to access different features.</p>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <a href="@Url.Action("BankReconciliation", "NexusIBS")" class="btn">Bank Reconciliation</a>
+        </div>
+        <div class="col-md-6 mb-3">
+            <a href="@Url.Action("UploadNexusPayables", "NexusIBS")" class="btn">Upload Nexus Payables</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <a href="@Url.Action("ProcessNexusPayables", "NexusIBS")" class="btn">Process Nexus Payables</a>
+        </div>
+        <div class="col-md-6 mb-3">
+            <a href="@Url.Action("ProcessConnectOnePayables", "NexusIBS")" class="btn">Process ConnectOne Payables</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <a href="@Url.Action("DatabaseMaintenance", "NexusIBS")" class="btn">Database Maintenance</a>
+        </div>
+    </div>
+</div>

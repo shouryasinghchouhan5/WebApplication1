@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "Kamson Properties";
+}
+
+<style>
+    .window {
+        width: 100%;
+        max-width: 800px;
+        margin: 20px auto;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .window-header {
+        background-color: #f0f0f0;
+        padding: 5px 10px;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .window-title {
+        font-weight: bold;
+    }
+    .close-button {
+        cursor: pointer;
+    }
+    .content {
+        padding: 20px;
+        background-color: white;
+    }
+    h1 {
+        font-family: 'Times New Roman', serif;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        margin-top: 0;
+    }
+    .section {
+        margin-bottom: 20px;
+    }
+    .section-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .link-item {
+        margin-bottom: 5px;
+    }
+    .link-item a {
+        text-decoration: none;
+        color: #000;
+    }
+    .link-item a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="window">
+    <div class="window-header">
+        <span class="window-title">@ViewData["Title"]</span>
+        <span class="close-button">✖</span>
+    </div>
+    <div class="content">
+        <h1>Kamson Properties</h1>
+        
+        <div class="section">
+            <div class="section-title">General Reports</div>
+            <div class="link-item">
+                <a href="#" id="inHousePropertyListing">In-House Property Listing</a>
+            </div>
+            <div class="link-item">
+                <a href="#" id="personnelReport">Personnel Report</a>
+            </div>
+        </div>
+        
+        <!-- Add more sections as needed -->
+        <div class="section">
+            <div class="section-title">Property Administration</div>
+            <div class="link-item">
+                <a href="#" id="propertyAdminDetails">Property Admin Details Form</a>
+            </div>
+            <div class="link-item">
+                <a href="#" id="bareApartmentProfile">BARE Apartment Profile Sheet</a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Navigation</div>
+            <div class="link-item">
+                <a href="#" id="accountingMenu">Accounting Menu</a>
+            </div>
+            <div class="link-item">
+                <a href="#" id="bankingMenu">Banking Menu</a>
+            </div>
+            <div class="link-item">
+                <a href="#" id="entityMenu">Entity Menu</a>
+            </div>
+            <div class="link-item">
+                <a href="#" id="exitKamson">Exit Kamson Properties</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelector('.close-button').addEventListener('click', function() {
+            // Handle closing the window or navigating away
+            alert('Close button clicked. Implement your close logic here.');
+        });
+    </script>
+}

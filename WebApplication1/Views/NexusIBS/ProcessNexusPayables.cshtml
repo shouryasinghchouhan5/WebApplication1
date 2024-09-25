@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Process Nexus Payables";
+}
+
+<h2>@ViewData["Title"]</h2>
+<p>Select an action to proceed with processing Nexus Payables.</p>
+
+<div class="row mt-4">
+    <div class="col-md-4 mb-3">
+        <a href="@Url.Action("PrintYellowSheets", "NexusIBS")" class="btn btn-lg btn-block w-100">Print Yellow Sheets</a>
+    </div>
+    <div class="col-md-4 mb-3">
+        <a href="@Url.Action("RecordApprovals", "NexusIBS")" class="btn btn-lg btn-block w-100">Record Approvals</a>
+    </div>
+    <div class="col-md-4 mb-3">
+        <a href="@Url.Action("MoveApprovedForms", "NexusIBS")" class="btn btn-lg btn-block w-100">Move Approved Forms for Transfer to Nexus</a>
+    </div>
+</div>
