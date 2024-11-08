@@ -1,33 +1,73 @@
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using WebApplication1.Data;
+using WebApplication1.Services;
+using WebApplication1.Models;
+using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<NexusPayablesService>();
+builder.Services.AddScoped<IPropertyService, PropertyService>();
 
-// Add logging
+// Add Configuration singleton explicitly
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
+// Enhanced logging configuration
+builder.Logging.ClearProviders();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
+builder.Logging.AddEventLog();
 
-// Add DbContext
-// Uncomment and modify if you're using Entity Framework Core
-// builder.Services.AddDbContext<YourDbContext>(options =>
-//     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Add DbContext with enhanced error handling and diagnostics
+builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+{
+    var logger = serviceProvider.GetRequiredService<ILogger<ApplicationDbContext>>();
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Add session support
+    options.UseSqlServer(connectionString, sqlServerOptionsAction: sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null);
+
+        // Add command timeout
+        sqlOptions.CommandTimeout(30);
+
+        // Enable detailed errors (only in Development)
+        if (builder.Environment.IsDevelopment())
+        {
+            options.EnableDetailedErrors();
+            options.EnableSensitiveDataLogging();
+        }
+    });
+
+    // Log connection string (excluding sensitive data)
+    var connectionStringBuilder = new SqlConnectionStringBuilder(connectionString);
+    if (!string.IsNullOrEmpty(connectionStringBuilder.Password))
+        connectionStringBuilder.Password = "******";
+    logger.LogInformation("Database connection string: {ConnectionString}", connectionStringBuilder.ToString());
+});
+
+// Health checks including database
+builder.Services.AddHealthChecks()
+    .AddSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"));
+
+// Rest of your existing service configurations
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
-// Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
@@ -36,17 +76,18 @@ builder.Services.AddCors(options =>
                           .AllowAnyMethod());
 });
 
-// Add authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
     });
 
 var app = builder.Build();
-
-Console.WriteLine($"Current environment: {app.Environment.EnvironmentName}");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -59,6 +100,24 @@ else
     app.UseHsts();
 }
 
+// Add health check endpoint
+app.MapHealthChecks("/health");
+
+// Global error handler
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (SqlException ex)
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "SQL Server Error: {Message}", ex.Message);
+        throw; // Re-throw to be handled by the exception handler middleware
+    }
+});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
@@ -67,23 +126,37 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 
-// Update the default route to point to the new Home controller
+// Your existing route configurations
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Add specific routes for NexusIBS and Kamson Properties
-app.MapControllerRoute(
-    name: "nexusIBS",
-    pattern: "nexus-ibs",
-    defaults: new { controller = "NexusIBS", action = "Index" });
-
+// Kamson Properties routes
 app.MapControllerRoute(
     name: "kamsonProperties",
     pattern: "kamson-properties",
     defaults: new { controller = "KamsonProperties", action = "Index" });
 
-// Add new route for Accounting
+app.MapControllerRoute(
+    name: "propertyListing",
+    pattern: "kamson-properties/property-listing",
+    defaults: new { controller = "KamsonProperties", action = "InHousePropertyListing" });
+
+app.MapControllerRoute(
+    name: "propertyAdmin",
+    pattern: "kamson-properties/admin",
+    defaults: new { controller = "KamsonProperties", action = "PropertyAdminDetails" });
+
+app.MapControllerRoute(
+    name: "bareApartment",
+    pattern: "kamson-properties/bare",
+    defaults: new { controller = "KamsonProperties", action = "BAREApartmentProfile" });
+
+app.MapControllerRoute(
+    name: "nexusIBS",
+    pattern: "nexus-ibs",
+    defaults: new { controller = "NexusIBS", action = "Index" });
+
 app.MapControllerRoute(
     name: "accounting",
     pattern: "accounting",

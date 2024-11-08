@@ -1,0 +1,153 @@
+﻿@model IEnumerable<WebApplication1.Models.PropertyListingViewModel>
+
+<style>
+    .property-table td {
+        vertical-align: top;
+        padding: 8px;
+    }
+
+    .property-id {
+        background-color: #f8f9fa;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .spacer-row {
+        height: 10px;
+    }
+
+    .window-header {
+        background-color: #f0f0f0;
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .window-title {
+        font-weight: bold;
+    }
+
+    .close-button {
+        cursor: pointer;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="window-header">
+        <span class="window-title">In-House Property Listing</span>
+        <span class="close-button" onclick="window.location.href='@Url.Action("Index", "KamsonProperties")'">✖</span>
+    </div>
+
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewBag.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @ViewBag.Message
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            No properties found.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered property-table">
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-nowrap property-id" rowspan="2">
+                            @item.PropertyID
+                        </td>
+                        <td colspan="2">
+                            <strong>@item.PropertyName</strong><br />
+                            @item.Street<br />
+                            @item.City, @item.State @item.Zip
+                        </td>
+                        <td>
+                            <span class="text-danger">Phone:</span> @((string.IsNullOrEmpty(item.PropTel)) ? "-" : item.PropTel) <br />
+                            <span class="text-danger">Fax:</span> @((string.IsNullOrEmpty(item.Fax)) ? "-" : item.Fax) <br />
+                            <span class="text-danger">Email:</span> @((string.IsNullOrEmpty(item.Email)) ? "-" : item.Email)
+                        </td>
+                        <td>
+                            <span class="text-danger"># of Units:</span> @(item.NoOfUnits ?? 0) <br />
+                            <span class="text-danger">Tax ID:</span> @((string.IsNullOrEmpty(item.TaxID)) ? "-" : item.TaxID) <br />
+                            <span class="text-danger">Purchased:</span> @(item.DatePurchased?.ToShortDateString() ?? "-")
+                        </td>
+                        <td>
+                            <span class="text-danger">County:</span> @((string.IsNullOrEmpty(item.County)) ? "-" : item.County) <br />
+                            <span class="text-danger">Borough:</span> @((string.IsNullOrEmpty(item.Borough)) ? "-" : item.Borough) <br />
+                            <span class="text-danger">Township:</span> @((string.IsNullOrEmpty(item.Township)) ? "-" : item.Township)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <span class="text-danger">Entity # and Name:</span> @item.EntityID - @item.EntityName <br />
+                            <span class="text-danger">DBA:</span> @((string.IsNullOrEmpty(item.DBA)) ? "-" : item.DBA)
+                        </td>
+                        <td>
+                            <span class="text-danger">School District:</span> @((string.IsNullOrEmpty(item.SchoolDistrict)) ? "-" : item.SchoolDistrict)
+                        </td>
+                        <td>
+                            <span class="text-danger">Staff Acct:</span> @((string.IsNullOrEmpty(item.StaffAcct)) ? "-" : item.StaffAcct) <br />
+                            <span class="text-danger">A/R:</span> @((string.IsNullOrEmpty(item.AR)) ? "-" : item.AR) <br />
+                            <span class="text-danger">A/P:</span> @((string.IsNullOrEmpty(item.AP)) ? "-" : item.AP)
+                        </td>
+                        <td>
+                            <span class="text-danger">Construction Mgr:</span> @((string.IsNullOrEmpty(item.ConstructionMgr)) ? "-" : item.ConstructionMgr)
+                        </td>
+                    </tr>
+                    <tr class="spacer-row">
+                        <td colspan="6" class="border-0"></td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+
+    <div class="mt-3">
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "KamsonProperties")'">
+                    Back to Home
+                </button>
+            </div>
+            <div class="col text-end">
+                <small class="text-muted">@DateTime.Now.ToString("dddd, MMMM d, yyyy")</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Handle close button click
+        document.querySelector('.close-button').addEventListener('click', function() {
+            window.location.href = '@Url.Action("Index", "KamsonProperties")';
+        });
+
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function() {
+            document.querySelectorAll('.alert').forEach(function(alert) {
+                var closeButton = alert.querySelector('.btn-close');
+                if (closeButton) {
+                    closeButton.click();
+                }
+            });
+        }, 5000);
+    </script>
+}

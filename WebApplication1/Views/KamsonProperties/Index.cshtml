@@ -10,6 +10,7 @@
         border: 1px solid #ccc;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+
     .window-header {
         background-color: #f0f0f0;
         padding: 5px 10px;
@@ -18,38 +19,47 @@
         justify-content: space-between;
         align-items: center;
     }
+
     .window-title {
         font-weight: bold;
     }
+
     .close-button {
         cursor: pointer;
     }
+
     .content {
         padding: 20px;
         background-color: white;
     }
+
     h1 {
         font-family: 'Times New Roman', serif;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         margin-top: 0;
     }
+
     .section {
         margin-bottom: 20px;
     }
+
     .section-title {
         font-weight: bold;
         margin-bottom: 10px;
     }
+
     .link-item {
         margin-bottom: 5px;
     }
-    .link-item a {
-        text-decoration: none;
-        color: #000;
-    }
-    .link-item a:hover {
-        text-decoration: underline;
-    }
+
+        .link-item a {
+            text-decoration: none;
+            color: #000;
+        }
+
+            .link-item a:hover {
+                text-decoration: underline;
+            }
 </style>
 
 <div class="window">
@@ -59,41 +69,40 @@
     </div>
     <div class="content">
         <h1>Kamson Properties</h1>
-        
+
         <div class="section">
             <div class="section-title">General Reports</div>
             <div class="link-item">
-                <a href="#" id="inHousePropertyListing">In-House Property Listing</a>
+                <a asp-controller="KamsonProperties" asp-action="InHousePropertyListing">In-House Property Listing</a>
             </div>
             <div class="link-item">
-                <a href="#" id="personnelReport">Personnel Report</a>
+                <a asp-controller="KamsonProperties" asp-action="PersonnelReport">Personnel Report</a>
             </div>
         </div>
-        
-        <!-- Add more sections as needed -->
+
         <div class="section">
             <div class="section-title">Property Administration</div>
             <div class="link-item">
-                <a href="#" id="propertyAdminDetails">Property Admin Details Form</a>
+                <a asp-controller="KamsonProperties" asp-action="PropertyAdminDetails">Property Admin Details Form</a>
             </div>
             <div class="link-item">
-                <a href="#" id="bareApartmentProfile">BARE Apartment Profile Sheet</a>
+                <a asp-controller="KamsonProperties" asp-action="BAREApartmentProfile">BARE Apartment Profile Sheet</a>
             </div>
         </div>
-        
+
         <div class="section">
             <div class="section-title">Navigation</div>
             <div class="link-item">
-                <a href="#" id="accountingMenu">Accounting Menu</a>
+                <a asp-controller="Accounting" asp-action="Index">Accounting Menu</a>
             </div>
             <div class="link-item">
-                <a href="#" id="bankingMenu">Banking Menu</a>
+                <a asp-controller="Banking" asp-action="Index">Banking Menu</a>
             </div>
             <div class="link-item">
-                <a href="#" id="entityMenu">Entity Menu</a>
+                <a asp-controller="Entity" asp-action="Index">Entity Menu</a>
             </div>
             <div class="link-item">
-                <a href="#" id="exitKamson">Exit Kamson Properties</a>
+                <a asp-controller="Home" asp-action="Index">Exit Kamson Properties</a>
             </div>
         </div>
     </div>
@@ -101,9 +110,15 @@
 
 @section Scripts {
     <script>
-        document.querySelector('.close-button').addEventListener('click', function() {
-            // Handle closing the window or navigating away
-            alert('Close button clicked. Implement your close logic here.');
+        document.querySelector('.close-button').addEventListener('click', function () {
+            window.location.href = '@Url.Action("Index", "Home")';
+        });
+
+        // Add click event tracking for debugging
+        document.querySelectorAll('.link-item a').forEach(link => {
+            link.addEventListener('click', function (e) {
+                console.log('Link clicked:', this.getAttribute('href'));
+            });
         });
     </script>
 }

@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Database Connection Test";
+}
+
+<div class="container mt-4">
+    <h2>Database Connection Test Results</h2>
+
+    @if (ViewBag.Status == "Success")
+    {
+        <div class="alert alert-success">
+            <h4>Connection Successful!</h4>
+            <hr>
+            <p><strong>Server Name:</strong> @ViewBag.ServerName</p>
+            <p><strong>Database Name:</strong> @ViewBag.DatabaseName</p>
+            <p><strong>Server Version:</strong> @ViewBag.ServerVersion</p>
+            <p><strong>Connection State:</strong> @ViewBag.State</p>
+            <p><strong>Connection String:</strong> @ViewBag.ConnectionString</p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <h4>Connection Failed</h4>
+            <hr>
+            <p><strong>Error Message:</strong> @ViewBag.Message</p>
+            @if (ViewBag.ErrorNumber != null)
+            {
+                <p><strong>Error Number:</strong> @ViewBag.ErrorNumber</p>
+                <p><strong>Error State:</strong> @ViewBag.ErrorState</p>
+                <p><strong>Error Class:</strong> @ViewBag.ErrorClass</p>
+            }
+            <p><strong>Connection String:</strong> @ViewBag.ConnectionString</p>
+        </div>
+    }
+
+    <div class="mt-3">
+        <a href="@Url.Action("Index", "KamsonProperties")" class="btn btn-primary">Back to Home</a>
+    </div>
+</div>
