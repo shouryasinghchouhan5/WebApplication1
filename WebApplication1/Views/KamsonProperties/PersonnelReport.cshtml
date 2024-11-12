@@ -1,0 +1,106 @@
+﻿@model IEnumerable<WebApplication1.Models.PropertyListingViewModel>
+
+<style>
+    .report-title {
+        color: darkred;
+        font-weight: bold;
+        font-size: 18px;
+        border-bottom: 2px solid black;
+        margin-bottom: 20px;
+        padding: 10px 0;
+    }
+
+    .personnel-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        margin-top: 20px;
+    }
+
+        .personnel-table th {
+            background-color: #f0f0f0;
+            border: 1px solid black;
+            padding: 4px;
+            text-align: left;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .personnel-table td {
+            border: 1px solid black;
+            padding: 4px;
+            white-space: nowrap;
+        }
+
+    .units-column {
+        text-align: right;
+    }
+
+    .alert {
+        margin-top: 10px;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="report-title">
+        Kamson Properties: Personnel Report
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            No properties found.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="personnel-table">
+                <thead>
+                    <tr>
+                        <th>Entity #</th>
+                        <th>Property ID</th>
+                        <th>MRI Code</th>
+                        <th>Property Name</th>
+                        <th class="units-column"># of Units</th>
+                        <th>Property Manager</th>
+                        <th>Admin Assistant</th>
+                        <th>Staff Acct</th>
+                        <th>A/R</th>
+                        <th>A/P</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.EntityID</td>
+                            <td>@item.PropertyID</td>
+                            <td>@item.MRI_PropertyID</td>
+                            <td>@item.PropertyName</td>
+                            <td class="units-column">@(item.NoOfUnits?.ToString() ?? "0")</td>
+                            <td>@(string.IsNullOrEmpty(item.PropMgr) ? "-" : item.PropMgr)</td>
+                            <td>@(string.IsNullOrEmpty(item.AdmAsst) ? "None Assigned" : item.AdmAsst)</td>
+                            <td>@(string.IsNullOrEmpty(item.StaffAcct) ? "-" : item.StaffAcct)</td>
+                            <td>@(string.IsNullOrEmpty(item.AR) ? "-" : item.AR)</td>
+                            <td>@(string.IsNullOrEmpty(item.AP) ? "-" : item.AP)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <div class="mt-3">
+        <div class="row">
+            <div class="col">
+                <a href="@Url.Action("Index", "KamsonProperties")" class="btn btn-secondary">Back to Home</a>
+                <button class="btn btn-primary" onclick="window.print()">Print Report</button>
+            </div>
+            <div class="col text-end">
+                <small class="text-muted">@DateTime.Now.ToString("dddd, MMMM d, yyyy")</small><br />
+                <small class="text-muted">Page 1 of 1</small>
+            </div>
+        </div>
+    </div>
+</div>

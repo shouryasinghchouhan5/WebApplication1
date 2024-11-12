@@ -75,7 +75,9 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader()
                           .AllowAnyMethod());
 });
-
+builder.Services.AddScoped<IDynamicFormService, DynamicFormService>();
+// Add this line in your Program.cs where other services are registered
+builder.Services.AddScoped<IDynamicFormService, DynamicFormService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {

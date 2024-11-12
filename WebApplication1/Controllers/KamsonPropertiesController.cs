@@ -15,17 +15,20 @@ namespace WebApplication1.Controllers
     public class KamsonPropertiesController : Controller
     {
         private readonly IPropertyService _propertyService;
+        private readonly IDynamicFormService _dynamicFormService;
         private readonly ILogger<KamsonPropertiesController> _logger;
         private readonly IConfiguration _configuration;
 
         public KamsonPropertiesController(
             IPropertyService propertyService,
+            IDynamicFormService dynamicFormService,
             ILogger<KamsonPropertiesController> logger,
             IConfiguration configuration)
         {
-            _propertyService = propertyService;
-            _logger = logger;
-            _configuration = configuration;
+            _propertyService = propertyService ?? throw new ArgumentNullException(nameof(propertyService));
+            _dynamicFormService = dynamicFormService ?? throw new ArgumentNullException(nameof(dynamicFormService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public IActionResult Index()
@@ -111,12 +114,24 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                _logger.LogInformation("Starting to fetch In-House Property Listing");
-                var properties = await _propertyService.GetInHousePropertyListing();
+                _logger.LogInformation("Starting to fetch In-House Property Listing using DynamicFormService");
+
+                List<PropertyListingViewModel> properties;
+                try
+                {
+                    properties = _dynamicFormService.GetPropertyListing();
+                    _logger.LogInformation("Successfully retrieved {Count} properties using DynamicFormService",
+                        properties?.Count ?? 0);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to get data using DynamicFormService, falling back to PropertyService");
+                    properties = await _propertyService.GetInHousePropertyListing();
+                }
 
                 if (properties == null)
                 {
-                    _logger.LogWarning("Property service returned null");
+                    _logger.LogWarning("Both services returned null");
                     ViewBag.ErrorMessage = "Unable to retrieve property listing data.";
                     return View(new List<PropertyListingViewModel>());
                 }
@@ -128,7 +143,9 @@ namespace WebApplication1.Controllers
                     return View(new List<PropertyListingViewModel>());
                 }
 
-                _logger.LogInformation("Successfully retrieved {Count} properties", properties.Count);
+                properties = properties.OrderBy(p => p.PropertyID).ToList();
+
+                _logger.LogInformation("Successfully retrieved and processed {Count} properties", properties.Count);
                 return View(properties);
             }
             catch (SqlException ex)
@@ -162,21 +179,42 @@ namespace WebApplication1.Controllers
                 return View(new List<PropertyListingViewModel>());
             }
         }
-
         [HttpGet]
         [Route("KamsonProperties/PersonnelReport")]
-        public IActionResult PersonnelReport()
+        public async Task<IActionResult> PersonnelReport()
         {
             try
             {
-                _logger.LogInformation("Accessing Personnel Report");
-                return View();
+                _logger.LogInformation("Starting PersonnelReport action");
+                var properties = await _propertyService.GetPersonnelReport();
+
+                if (properties == null)
+                {
+                    _logger.LogWarning("Properties is null");
+                    return View(new List<PropertyListingViewModel>());
+                }
+
+                _logger.LogInformation($"Retrieved {properties.Count} properties");
+
+                // Log first few records for debugging
+                foreach (var prop in properties.Take(3))
+                {
+                    _logger.LogInformation("Sample property: {@Property}", new
+                    {
+                        prop.EntityID,
+                        prop.PropertyID,
+                        prop.StaffAcct,
+                        prop.AR,
+                        prop.AP
+                    });
+                }
+
+                return View(properties);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error accessing Personnel Report");
-                ViewBag.ErrorMessage = "An error occurred while accessing the Personnel Report.";
-                return View();
+                _logger.LogError(ex, "Error in PersonnelReport action");
+                throw;
             }
         }
 

@@ -1,0 +1,98 @@
+﻿@model DynamicFormModel
+@{
+    ViewData["Title"] = $"{Model.TableName} Form";
+}
+
+<div class="container">
+    <h2>@Model.TableName Form</h2>
+
+    <form id="dynamicForm" class="mb-4">
+        @foreach (var column in Model.Columns.Where(c => !c.IsIdentity))
+        {
+            <div class="form-group">
+                <label>@column.ColumnName</label>
+                @switch (column.DataType.ToLower())
+                {
+                    case "bit":
+                        <input type="checkbox" class="form-control" name="@column.ColumnName" />
+                        break;
+                    case "datetime":
+                    case "date":
+                        <input type="date" class="form-control" name="@column.ColumnName" />
+                        break;
+                    case "int":
+                    case "decimal":
+                    case "float":
+                        <input type="number" class="form-control" name="@column.ColumnName" />
+                        break;
+                    default:
+                        <input type="text" class="form-control" name="@column.ColumnName" />
+                        break;
+                }
+            </div>
+        }
+
+        <div class="button-group mt-3">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" onclick="clearForm()">New</button>
+            <button type="button" class="btn btn-info" onclick="generateReport()">Generate Report</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table id="dataGrid" class="table table-striped">
+            <thead>
+                <tr>
+                    @foreach (var column in Model.Columns)
+                    {
+                        <th>@column.ColumnName</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.GridData)
+                {
+                    <tr>
+                        @foreach (var column in Model.Columns)
+                        {
+                            <td>@row[column.ColumnName]</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#dynamicForm').on('submit', function (e) {
+                e.preventDefault();
+                var formData = $(this).serializeArray();
+
+                $.ajax({
+                    url: '@Url.Action("Save")?tableName=@Model.TableName',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            alert('Data saved successfully!');
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    }
+                });
+            });
+        });
+
+        function clearForm() {
+            $('#dynamicForm')[0].reset();
+        }
+
+        function generateReport() {
+            window.location.href = '@Url.Action("GenerateReport")?tableName=@Model.TableName';
+        }
+    </script>
+}
